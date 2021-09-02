@@ -1,0 +1,3 @@
+__VERSION__ = "0.0"
+
+import openmodelica_python_gym.omc  as omc

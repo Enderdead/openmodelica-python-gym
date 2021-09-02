@@ -8,27 +8,37 @@ class OmcRunner():
     """
     Charger de verifier les fichiers, pousser 
     """
-    def __init__(fileName, modelName, lmodel=None, project_dir=None):
+    def __init__(self, fileName, modelName, lmodel=None, project_dir=None):
         """ Create the modelica objectf  """
 
         if project_dir is None:
-            self.project_dir = os.path.dirname(fileName)
+            self.project_dir = os.path.abspath(os.path.dirname(fileName))
         else:
-            self.project_dir = project_dir
+            self.project_dir = os.path.abspath(project_dir)
         self.fileName = os.path.basename(fileName)
-        self.lmodel = lmodel
+        if not lmodel is None:
+            for i in range(len(lmodel)):
+                if not os.path.isfile(lmodel[i]):
+                    lmodel[i] = os.path.join(self.project_dir, lmodel[i])
+            self.lmodel = lmodel
+        else:
+            self.lmodel=[]
         self.modelName = modelName
 
         # Improve the path gesture.
-        self.model = ModelicaSystem(os.path.join(self.project_dir, self.fileName), self.modelName, lmodel=self.lmodel )
+        self._build()
         
-    def build(self):
+    def _build(self):
         # Check if build dir is availiable 
         if not os.path.isdir(os.path.join(self.project_dir, "build")):
             os.makedirs(os.path.join(self.project_dir, "build"))
 
+        # Include our own library
+        self.lmodel.append(os.path.join(os.path.dirname(__file__), "../omc_gym_lib/package.mo"))
+
         curr_dir = os.curdir
         os.chdir(os.path.join(self.project_dir, "build"))
+        self.model = ModelicaSystem(os.path.join(self.project_dir, self.fileName), self.modelName, lmodel=self.lmodel )
         self.model.buildModel()
         os.chdir(curr_dir)
 
