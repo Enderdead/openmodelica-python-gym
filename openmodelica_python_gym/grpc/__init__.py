@@ -1,0 +1,2 @@
+from openmodelica_python_gym.grpc.grpc import grpcInterface
+from openmodelica_python_gym.grpc import python_gym_pb2

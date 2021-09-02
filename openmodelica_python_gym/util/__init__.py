@@ -1,0 +1,1 @@
+from openmodelica_python_gym.util import find_omc_interface

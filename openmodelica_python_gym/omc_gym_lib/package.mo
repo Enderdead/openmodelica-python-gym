@@ -36,7 +36,9 @@ block pyGymInterface "Generate step signal of type Real"
     input String in_label[n_input];
     input String out_label[n_output];
     output Real y[n_output];
-  external "C" annotation(Library={"-lprotobuf", "-lgrpc", "-lgpr", "-lgrpc++", "grpc_interface"});
+  external "C" annotation(Library={"-lprotobuf", "-lgrpc", "-lgpr", "-lgrpc++", "grpc_interface"},
+  LibraryDirectory={"/home/francois/Documents/git/Purecontrol/openmodelica-python-gym/motor_model/"},
+  IncludeDirectory={"/home/francois/Documents/git/Purecontrol/openmodelica-python-gym/openmodelica_python_gym/external_lib/grpc_interface"});
   end grpcInterface;
 
 

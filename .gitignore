@@ -1,5 +1,11 @@
 # Generated protoc files
-openmodelica-python-gym/protocol/
+openmodelica_python_gym/grpc/python_gym_pb2.py
+openmodelica_python_gym/grpc/python_gym_pb2_grpc.py
+
+openmodelica_python_gym/external_lib/grpc_interface/generated/python_gym.grpc.pb.cc
+openmodelica_python_gym/external_lib/grpc_interface/generated/python_gym.grpc.pb.h
+openmodelica_python_gym/external_lib/grpc_interface/generated/python_gym.pb.cc
+openmodelica_python_gym/external_lib/grpc_interface/generated/python_gym.pb.h
 
 # VSCode
 .vscode/

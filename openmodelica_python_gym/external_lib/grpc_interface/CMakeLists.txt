@@ -8,7 +8,7 @@ set (CMAKE_CXX_FLAGS "-fPIC")
 find_package(Protobuf REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 
-add_library(grpc_interface  SHARED grpc_interface.cc ./generated/python_gym.grpc.pb.cc ./generated/python_gym.grpc.pb.cc)
+add_library(grpc_interface SHARED grpc_interface.cc ./generated/python_gym.pb.cc ./generated/python_gym.grpc.pb.cc)
 
 target_link_libraries(grpc_interface
         protobuf::libprotobuf

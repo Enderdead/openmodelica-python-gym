@@ -1,0 +1,7 @@
+grpclib>=0.4.2
+grpcio-tools>=1.32.0
+grpcio-tools>=1.32.0
+protobuf
+OMPython=>3.3.0
+numpy
+gym>=0.17.1

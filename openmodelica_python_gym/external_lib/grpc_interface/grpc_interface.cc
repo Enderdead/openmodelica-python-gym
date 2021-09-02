@@ -2,8 +2,8 @@
 #include <iostream>
 #include <unistd.h>
 #include <vector>
-#include "generated/python_gym.grpc.pb.h"
-#include "generated/python_gym.pb.h"
+#include "./generated/python_gym.grpc.pb.h"
+#include "./generated/python_gym.pb.h"
 #include <string.h>
 
 #include <grpcpp/grpcpp.h>
