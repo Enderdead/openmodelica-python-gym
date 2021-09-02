@@ -1,0 +1,20 @@
+
+syntax = "proto3";
+
+package pythonGym;
+
+service pythonGym {
+
+  rpc next(DataSet) returns (DataSet) {}
+
+}
+
+
+message DataSet {
+ repeated Data data=1;
+}
+
+message Data {
+  string id =1;
+  double value =2;
+}

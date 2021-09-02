@@ -1,0 +1,1 @@
+python3 -m grpc_tools.protoc -I./openmodelica-python-gym/protocol/ --python_out=./openmodelica-python-gym/protocol/ --grpc_python_out=./openmodelica-python-gym/protocol/ ./openmodelica-python-gym/protocol/python_gym.proto
