@@ -23,7 +23,7 @@ block pyGymInterface "Generate step signal of type Real"
   parameter Integer n_input=1 "Number of inputs";
   parameter Integer n_output=1 "Number of outputs";
   parameter String  input_labels[:] "Ordered input labels";
-  parameter String  ouput_labels[:] "Ordered output labels";
+  parameter String  output_labels[:] "Ordered output labels";
 
   annotation(Dialog(groupImage="modelica://Modelica/Resources/Images/Blocks/Sources/Step.png"));
   extends DiscreteMIMO(nin=n_input, nout=n_output, samplePeriod=0.1);
@@ -36,14 +36,14 @@ block pyGymInterface "Generate step signal of type Real"
     input String in_label[n_input];
     input String out_label[n_output];
     output Real y[n_output];
-  external "C" annotation(Library={"-lprotobuf", "-lgrpc", "-lgpr", "-lgrpc++", "grpcInterface"});
+  external "C" annotation(Library={"-lprotobuf", "-lgrpc", "-lgpr", "-lgrpc++", "grpc_interface"});
   end grpcInterface;
 
 
 equation
   /*when sampleTrigger */
     when sampleTrigger then
-    grpcInterface(u, out);
+    y = grpcInterface(u, input_labels, output_labels);
   end when;
   der(t) = 1;
   annotation (

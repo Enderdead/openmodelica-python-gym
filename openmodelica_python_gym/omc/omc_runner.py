@@ -33,8 +33,17 @@ class OmcRunner():
         if not os.path.isdir(os.path.join(self.project_dir, "build")):
             os.makedirs(os.path.join(self.project_dir, "build"))
 
+        # Check if Resources/Library is availiable   
+        if not os.path.isdir(os.path.join(self.project_dir, "Resources/Library")):
+            os.makedirs(os.path.join(self.project_dir, "Resources/Library"))
+
         # Include our own library
         self.lmodel.append(os.path.join(os.path.dirname(__file__), "../omc_gym_lib/package.mo"))
+
+        # Create a symbolic link to our c library
+        local_so_file = os.path.join(os.path.dirname(__file__), "../external_lib/grpc_interface/build/libgrpc_interface.so")
+        if not os.path.isfile(os.path.join(self.project_dir, "Resources/Library/libgrpc_interface.so")):
+            os.symlink(local_so_file, os.path.join(self.project_dir, "Resources/Library/libgrpc_interface.so"))
 
         curr_dir = os.curdir
         os.chdir(os.path.join(self.project_dir, "build"))
