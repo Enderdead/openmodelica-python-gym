@@ -17,33 +17,33 @@ package omc_gym_lib "Library for electrical power systems"
 
   import Modelica.Blocks.Interfaces.RealOutput;
   import Modelica.Blocks.Interfaces.RealInput;
-  import Modelica.Blocks.Interfaces.DiscreteBlock;
+  import Modelica.Blocks.Interfaces.DiscreteMIMO;
 
-block FunctionProxy "Generate step signal of type Real"
+block pyGymInterface "Generate step signal of type Real"
+  parameter Integer n_input=1 "Number of inputs";
+  parameter Integer n_output=1 "Number of outputs";
+  parameter String  input_labels[:] "Ordered input labels";
+  parameter String  ouput_labels[:] "Ordered output labels";
+
   annotation(Dialog(groupImage="modelica://Modelica/Resources/Images/Blocks/Sources/Step.png"));
-  extends DiscreteBlock(samplePeriod=0.1);
-    RealOutput y "Connector of Real output signal" annotation (Placement(
-        transformation(extent={{100,-10},{120,10}})));  
-        
-    RealInput u "Connector of Real input signal"
-    annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));      
-        
+  extends DiscreteMIMO(nin=n_input, nout=n_output, samplePeriod=0.1);
+
     Real t(start=0);   
 
 
-  /*function ExternalFunc2
-    input Real x[:];
-    input String label[:];
-    output Real y;
-  external "C" annotation(Library={"-lprotobuf", "-lgrpc", "-lgpr", "-lgrpc++", "-L/home/francois/Documents/Programme/grpc/cmake/build/", "ExternalFunc2"}, LibraryDirectory={"/home/francois/Documents/Modeling/motor_protobuf/
-"}, IncludeDirectory={"/home/francois/Documents/Modeling/motor_protobuf/source2"});
-  end ExternalFunc2;*/
+  function grpcInterface
+    input Real x[n_input];
+    input String in_label[n_input];
+    input String out_label[n_output];
+    output Real y[n_output];
+  external "C" annotation(Library={"-lprotobuf", "-lgrpc", "-lgpr", "-lgrpc++", "grpcInterface"});
+  end grpcInterface;
 
 
 equation
   /*when sampleTrigger */
     when sampleTrigger then
-    y = 0.0;/*ExternalFunc2({u, u*2}, {"speed_captor", "mdr"});*/
+    grpcInterface(u, out);
   end when;
   der(t) = 1;
   annotation (
@@ -128,7 +128,7 @@ equation
         Text(
           extent={{-72,100},{-31,80}},
           textString="y")}));
-end FunctionProxy;
+end pyGymInterface;
 
 
 
