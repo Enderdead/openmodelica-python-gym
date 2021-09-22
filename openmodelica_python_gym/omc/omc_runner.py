@@ -16,7 +16,7 @@ class OmcRunner():
     """
     Charger de verifier les fichiers, pousser 
     """
-    def __init__(self, fileName, modelName, lmodel=None, project_dir=None):
+    def __init__(self, fileName, modelName, lmodel=None, smodel=None, project_dir=None):
         """ Create the modelica objectf  """
 
         self.init = False
@@ -33,6 +33,8 @@ class OmcRunner():
             self.lmodel = lmodel
         else:
             self.lmodel=[]
+        
+        self.smodel = smodel if not (smodel is None) else  []
         self.modelName = modelName
 
         # Improve the path gesture.
@@ -57,7 +59,7 @@ class OmcRunner():
 
         curr_dir = os.curdir
         os.chdir(os.path.join(self.project_dir, "build"))
-        self.model = ModelicaSystem(os.path.join(self.project_dir, self.fileName), self.modelName, lmodel=self.lmodel )
+        self.model = ModelicaSystem(os.path.join(self.project_dir, self.fileName), self.modelName, lmodel=self.smodel+self.lmodel )
         self.model.buildModel()
         os.chdir(curr_dir)
 
