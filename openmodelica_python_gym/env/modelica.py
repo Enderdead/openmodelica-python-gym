@@ -11,6 +11,9 @@ class ModelicaEnv(gym.Env):
     def __init__(self, omc_runner, reward_func, input_list, output_list):
         super(ModelicaEnv, self).__init__()
 
+        if len(list(set(input_list)))!=len(input_list):
+            raise RuntimeError("Your list contains duplicate ! ")
+
         self.model = omc_runner
         self.input_list = input_list
         self.output_list = output_list

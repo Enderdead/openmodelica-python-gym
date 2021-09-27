@@ -50,6 +50,7 @@ class grpcInterface(python_gym_pb2_grpc.pythonGym):
 
         if np.sum(np.isnan(np_x)) >= 1:
             # Mising values
+            print(np.isnan(np_x))
             raise RuntimeError("TODO")
 
         np_y = self.target_func(np_x)

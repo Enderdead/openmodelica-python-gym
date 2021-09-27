@@ -17,38 +17,52 @@ package omc_gym_lib "Library for electrical power systems"
 
   import Modelica.Blocks.Interfaces.RealOutput;
   import Modelica.Blocks.Interfaces.RealInput;
-  import Modelica.Blocks.Interfaces.DiscreteMIMO;
+  import Modelica.Blocks.Interfaces.DiscreteBlock;
 
 block pyGymInterface "Generate step signal of type Real"
-  parameter Integer n_input=1 "Number of inputs";
-  parameter Integer n_output=1 "Number of outputs";
+  parameter Integer nin=1 "Number of inputs";
+  parameter Integer nout=1 "Number of outputs";
   parameter String  input_labels[:] "Ordered input labels";
   parameter String  output_labels[:] "Ordered output labels";
+    extends DiscreteBlock;
 
-  annotation(Dialog(groupImage="modelica://Modelica/Resources/Images/Blocks/Sources/Step.png"));
-  extends DiscreteMIMO(nin=n_input, nout=n_output, samplePeriod=0.1);
 
+
+
+  Modelica.Blocks.Interfaces.RealInput u[nin](each stateSelect=StateSelect.never) "Connector of Real input signals" annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
+  Modelica.Blocks.Interfaces.RealOutput y[nout] "Connector of Real output signals"
+    annotation (Placement(transformation(extent={{100,-10},{120,10}})));
+    
+    
     Real t(start=0);   
+
+///(stateSelect = StateSelect.always);
 
 
   function grpcInterface
-    input Real x[n_input];
-    input String in_label[n_input];
-    input String out_label[n_output];
-    output Real y[n_output];
+    input Real t;
+    input Real x[nin];
+    input String in_label[nin];
+    input String out_label[nout];
+    input Real sampling_rate;
+    output Real y[nout];
+    
   external "C" annotation(Library={"-lprotobuf", "-lgrpc", "-lgpr", "-lgrpc++", "grpc_interface"},
   LibraryDirectory={"/home/francois/Documents/git/Purecontrol/openmodelica-python-gym/motor_model/"},
   IncludeDirectory={"/home/francois/Documents/git/Purecontrol/openmodelica-python-gym/openmodelica_python_gym/external_lib/grpc_interface"});
+    //  annotation(derivative(zeroDerivative =(in_label,in_label))=fakederive);
   end grpcInterface;
 
-
 equation
-  /*when sampleTrigger */
-    when sampleTrigger then
-    y = grpcInterface(u, input_labels, output_labels);
-  end when;
+  //when { sampleTrigger } then
+     y = grpcInterface(t, u, input_labels, output_labels, samplePeriod);
+  //end when;
   der(t) = 1;
-  annotation (
+
+  annotation(
+      Dialog(groupImage = "modelica://Modelica/Resources/Images/Blocks/Sources/Step.png"));
+
+annotation (
     Icon(coordinateSystem(
         preserveAspectRatio=true,
         extent={{-100,-100},{100,100}}), graphics={
@@ -130,6 +144,7 @@ equation
         Text(
           extent={{-72,100},{-31,80}},
           textString="y")}));
+
 end pyGymInterface;
 
 

@@ -101,7 +101,9 @@ class OmcRunner():
         curr_dir = os.curdir
         os.chdir(os.path.join(self.project_dir, "build"))
         if need_build:
+            
             self.model = ModelicaSystem(os.path.join(self.project_dir, self.fileName), self.modelName, lmodel=self.smodel+self.lmodel )
+            self.model.setParameters("d=bltdump")
             self.model.buildModel()
             
             target_blocs = find_omc_interface(self.model.tree.getroot())
@@ -324,11 +326,10 @@ class FakeModel():
 
 
         if not self.simulationOption is None:
-            override = " -override=" + "".join(self.simulationOption)
+            override = " -override=" + ",".join(self.simulationOption)
         else:
             override = " "
-
-        cmd = getExeFile + override
+        cmd = getExeFile + override #+ " -lv LOG_LS"
         os.system(cmd)
 
 

@@ -50,19 +50,12 @@ struct compareDataLabel
     }
 };
 
-void compute_grpcInterface(double x[], int size_x, const char* in_label[], int size_in_label, const char* out_label[], int size_out_label, double y[], int size_y) {
+
+void receive_new_data(double x[], int size_x, const char * in_label[], const char * out_label[], double y[], int size_y) {
+
     static auto channel = grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials());
     static grpcGymClient client(channel);
-
-    if (size_x != size_in_label){
-        std:std::cerr << "Invalid number of input labels ! ( expected ="<<  size_x <<", got = " << size_in_label << ")" << std::endl;
-        return;
-    }
-
-    if (size_y != size_out_label){
-        std::cerr << "Invalid number of output labels ! ( expected ="<<  size_y <<", got = " << size_out_label << ")" << std::endl;
-        return;
-    }
+        std::cout << "data asked !" << std::endl;
 
     // Process input data !
     pythonGym::DataSet input_data;
@@ -90,13 +83,64 @@ void compute_grpcInterface(double x[], int size_x, const char* in_label[], int s
 
         y[i] = it->value();
     }
+        std::cout << "data received !" << std::endl;
 
+}
+
+
+void compute_grpcInterface(double t, double x[], int size_x, const char* in_label[], int size_in_label, const char* out_label[], int size_out_label, double sampling_rate, double y[], int size_y) {
+    //std::cout << t << std::endl;
+
+    static double data_zone_ref =t-sampling_rate; // time ref limit between data_zone_1 and data_zone_2
+    static double * data_zone_1 = (double*) malloc(sizeof(double)*size_y); // y before data_zone_ref
+    static double * data_zone_2 = (double*) malloc(sizeof(double)*size_y); // y after  data_zone_ref
+
+
+    if (size_x != size_in_label){
+        std:std::cerr << "Invalid number of input labels ! ( expected ="<<  size_x <<", got = " << size_in_label << ")" << std::endl;
+        return;
+    }
+
+    if (size_y != size_out_label){
+        std::cerr << "Invalid number of output labels ! ( expected ="<<  size_y <<", got = " << size_out_label << ")" << std::endl;
+        return;
+    }
+
+    if ((t-data_zone_ref)>=sampling_rate) {
+        // copy data from zone 2 to zone 1
+        for (int i = 0; i < size_y; i++) {     
+            data_zone_1[i] = data_zone_2[i];     
+        }
+
+        // next we need to get new value 
+        receive_new_data(x, size_x, in_label, out_label, y, size_y);
+
+        // finnaly we update our inter values.
+        for (int i = 0; i < size_y; i++) {     
+            data_zone_2[i] = y[i];     
+        }
+
+        data_zone_ref += sampling_rate; 
+
+    }  else {
+        // We just need to copy our previous data depending of the t position according to data_zone_ref
+        if ((t<data_zone_ref)){
+
+            for (int i = 0; i < size_y; i++) {     
+                y[i] = data_zone_1[i];     
+            }
+        } else {
+            for (int i = 0; i < size_y; i++) {     
+                y[i] = data_zone_2[i];     
+            }    
+        }
+    }
 }
 
 
 
 extern "C" {// why I'm using this C style proxy  => https://www.ibm.com/docs/en/i/7.1?topic=linkage-name-mangling-c-only
-void grpcInterface(double x[], int size_x, const char* in_label[], int size_in_label, const char* out_label[], int size_out_label, double y[], int size_y){
-    compute_grpcInterface(x, size_x, in_label, size_in_label, out_label, size_out_label, y, size_y);
+void grpcInterface(double t, double x[], int size_x, const char* in_label[], int size_in_label, const char* out_label[], int size_out_label, double sampling_rate, double y[], int size_y){
+    compute_grpcInterface(t, x, size_x, in_label, size_in_label, out_label, size_out_label, sampling_rate, y, size_y);
     }
 }
