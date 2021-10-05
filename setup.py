@@ -48,6 +48,11 @@ class ProxyProtobufMover(install_lib):
 
         os.system("mkdir -p ./build/lib/openmodelica_python_gym/external_lib/grpc_interface/build")
         os.system("cp ./openmodelica_python_gym/external_lib/grpc_interface/build/libgrpc_interface.so ./build/lib/openmodelica_python_gym/external_lib/grpc_interface/build/libgrpc_interface.so")
+        os.system("cp ./openmodelica_python_gym/omc_gym_lib/BaseClasses/Emitter.mo ./build/lib/openmodelica_python_gym/omc_gym_lib/BaseClasses/Emitter.mo")
+        os.system("cp ./openmodelica_python_gym/omc_gym_lib/BaseClasses/package.mo ./build/lib/openmodelica_python_gym/omc_gym_lib/BaseClasses/package.mo")
+        os.system("cp ./openmodelica_python_gym/omc_gym_lib/BaseClasses/package.order ./build/lib/openmodelica_python_gym/omc_gym_lib/BaseClasses/package.order")
+        os.system("cp ./openmodelica_python_gym/omc_gym_lib/BaseClasses/Receiver.mo ./build/lib/openmodelica_python_gym/omc_gym_lib/BaseClasses/Receiver.mo")
+
 
         os.chdir(prev_dir)
         install_lib.run(self)
@@ -61,8 +66,8 @@ setup(
     author='François Gauthier-Clerc',
     author_email='francois@gauthier-clerc.fr',
     url="https://github.com/Enderdead/openmodelica-python-gym",
-    packages=find_packages(exclude=[])+['openmodelica_python_gym.external_lib.grpc_interface',],
-    package_data={'external_lib' : ['grpc_interface/build/libgrpc_interface.so']},
+    packages=find_packages(exclude=[])+['openmodelica_python_gym.external_lib.grpc_interface','openmodelica_python_gym.omc_gym_lib.BaseClasses'],
+    package_data={'external_lib' : ['grpc_interface/build/libgrpc_interface.so'], "omc_gym_lib" : ["BaseClasses/Emitter.mo"]},
     include_package_data=True,
     install_requires=["grpclib>=0.4.2",
                       "grpcio-tools>=1.32.0",

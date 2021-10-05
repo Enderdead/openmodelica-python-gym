@@ -11,7 +11,7 @@ model DrivedMotor
     Placement(visible = true, transformation(origin = {-4, -46}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Mechanics.Rotational.Sources.ConstantTorque constantTorque(tau_constant = -0.01)  annotation(
     Placement(visible = true, transformation(origin = {104, 44}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
-  omc_gym_lib.pyGymInterface qedfqzfqsz( input_labels={"speedSensor", "time"}, nin = 2, nout = 2, output_labels={"PID.setpoint", "other"}, samplePeriod = 0.002) annotation(
+  omc_gym_lib.pyGymInterface qedfqzfqsz( input_labels={"speedSensor", "time"}, nin = 2, nout = 2, output_labels={"PID.setpoint", "other"}, samplePeriod = 0.1) annotation(
     Placement(visible = true, transformation(origin = {-56, 2}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   Modelica.Mechanics.Rotational.Sources.Torque torque1 annotation(
     Placement(visible = true, transformation(origin = {70, -84}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));

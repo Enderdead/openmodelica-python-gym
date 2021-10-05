@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 sim = opg.omc.OmcRunner("./motor_model/DrivedMotor.mo","DrivedMotor", ["csvReader.mo"])
-sim.set_simulation_option(start_Time=0, stop_Time=10.0)
+sim.set_simulation_option(start_Time=0, stop_Time=10.0, stepSize=0.001)
 def reward_func(x):
     return 0.0
 
@@ -25,5 +25,5 @@ data = sim.get_sim_data(["speedSensor.w"])
 
 
 plt.plot(data.index, data["speedSensor.w"])
-plt.plot(np.arange(0.1,1.1,0.1), np.array(obs_data[:-1]))
+plt.plot(np.arange(0.1,10.,0.1), np.array(obs_data[:-1]))
 plt.show()

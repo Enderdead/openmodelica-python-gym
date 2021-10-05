@@ -8,6 +8,13 @@
 
 #include <grpcpp/grpcpp.h>
 
+double   data_zone_ref = -1000; // time ref limit between data_zone_1 and data_zone_2
+double * data_zone_1 = nullptr; //(double*) malloc(sizeof(double)*size_y); // y before data_zone_ref
+double * data_zone_2 = nullptr; //(double*) malloc(sizeof(double)*size_y); // y after  data_zone_ref
+
+
+
+
 class grpcGymClient {
 public:
     grpcGymClient(std::shared_ptr<grpc::Channel> channel)
@@ -55,7 +62,6 @@ void receive_new_data(double x[], int size_x, const char * in_label[], const cha
 
     static auto channel = grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials());
     static grpcGymClient client(channel);
-        std::cout << "data asked !" << std::endl;
 
     // Process input data !
     pythonGym::DataSet input_data;
@@ -83,17 +89,31 @@ void receive_new_data(double x[], int size_x, const char * in_label[], const cha
 
         y[i] = it->value();
     }
-        std::cout << "data received !" << std::endl;
 
 }
 
+double compute_grpcGetter(double t, int index) {
+    if ((data_zone_ref<-999) && (data_zone_1==nullptr) && (data_zone_2==nullptr)) {
+        return 0.0;
+    }
 
-void compute_grpcInterface(double t, double x[], int size_x, const char* in_label[], int size_in_label, const char* out_label[], int size_out_label, double sampling_rate, double y[], int size_y) {
-    //std::cout << t << std::endl;
+    if ((t<data_zone_ref)){
+            return data_zone_1[index-1];     
+    } else {
+            return data_zone_2[index-1];// Modelica start index at 1 ...     
+    }
+}
 
-    static double data_zone_ref =t-sampling_rate; // time ref limit between data_zone_1 and data_zone_2
-    static double * data_zone_1 = (double*) malloc(sizeof(double)*size_y); // y before data_zone_ref
-    static double * data_zone_2 = (double*) malloc(sizeof(double)*size_y); // y after  data_zone_ref
+void compute_grpcInterface(double t, double x[], int size_x, const char* in_label[], int size_in_label, const char* out_label[], int size_out_label, double sampling_rate) {
+    int size_y = size_out_label;
+
+    if ((data_zone_ref<-999) && (data_zone_1==nullptr) && (data_zone_2==nullptr)) {
+        data_zone_ref = t-sampling_rate;// time ref limit between data_zone_1 and data_zone_2
+        data_zone_1 = (double*) malloc(sizeof(double)*size_y); // y before data_zone_ref
+        data_zone_2 = (double*) malloc(sizeof(double)*size_y); // y after  data_zone_ref   
+
+    }  
+
 
 
     if (size_x != size_in_label){
@@ -113,18 +133,18 @@ void compute_grpcInterface(double t, double x[], int size_x, const char* in_labe
         }
 
         // next we need to get new value 
-        receive_new_data(x, size_x, in_label, out_label, y, size_y);
+        receive_new_data(x, size_x, in_label, out_label, data_zone_2, size_y);
 
         // finnaly we update our inter values.
-        for (int i = 0; i < size_y; i++) {     
-            data_zone_2[i] = y[i];     
-        }
+        //for (int i = 0; i < size_y; i++) {     
+        //    data_zone_2[i] = y[i];     
+        //}
 
         data_zone_ref += sampling_rate; 
 
     }  else {
         // We just need to copy our previous data depending of the t position according to data_zone_ref
-        if ((t<data_zone_ref)){
+        /*if ((t<data_zone_ref)){
 
             for (int i = 0; i < size_y; i++) {     
                 y[i] = data_zone_1[i];     
@@ -133,14 +153,19 @@ void compute_grpcInterface(double t, double x[], int size_x, const char* in_labe
             for (int i = 0; i < size_y; i++) {     
                 y[i] = data_zone_2[i];     
             }    
-        }
+        }*/
     }
 }
 
 
 
 extern "C" {// why I'm using this C style proxy  => https://www.ibm.com/docs/en/i/7.1?topic=linkage-name-mangling-c-only
-void grpcInterface(double t, double x[], int size_x, const char* in_label[], int size_in_label, const char* out_label[], int size_out_label, double sampling_rate, double y[], int size_y){
-    compute_grpcInterface(t, x, size_x, in_label, size_in_label, out_label, size_out_label, sampling_rate, y, size_y);
-    }
+void grpcInterface(double t, double x[], int size_x, const char* in_label[], int size_in_label, const char* out_label[], int size_out_label, double sampling_rate){
+    compute_grpcInterface(t, x, size_x, in_label, size_in_label, out_label, size_out_label, sampling_rate);
+}
+
+double grpcGetter(double t, int index) {
+    return compute_grpcGetter(t, index);
+}
+
 }

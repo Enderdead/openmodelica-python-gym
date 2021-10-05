@@ -65,9 +65,9 @@ class OmcRunner():
         if self.use_cache:
             warnings.warn(f"Be aware that the following file will be used to check futur update : {self.fileName}")
             file_hasher = hashlib.sha256()
-            if not os.path.exists(self.fileName):  # if file does not eixt
+            if not os.path.exists(os.path.join(self.project_dir, self.fileName)):  # if file does not eixt
                 raise RuntimeError("Can't file your main modelica file !")
-            fil = open(self.fileName, "r")
+            fil = open(os.path.join(self.project_dir, self.fileName), "r")
             file_hasher.update("".join(fil.readlines()).encode('utf-8'))
             fil.close()
             hash_project = file_hasher.hexdigest()
@@ -103,7 +103,11 @@ class OmcRunner():
         if need_build:
             
             self.model = ModelicaSystem(os.path.join(self.project_dir, self.fileName), self.modelName, lmodel=self.smodel+self.lmodel )
-            self.model.setParameters("d=bltdump")
+            #self.model.setParameters("d=bltdump")
+            #print(self.model.getconn.sendExpression("checkSettings()"))
+            #print(self.model.getconn.sendExpression("setCFlags(getCFlags() + '-O3')"))
+            #print(self.model.getconn.sendExpression("setCompiler(gcc)"))
+            #print("END \n\n")
             self.model.buildModel()
             
             target_blocs = find_omc_interface(self.model.tree.getroot())
@@ -152,7 +156,7 @@ class OmcRunner():
             raise RuntimeError("OMC Simulator is not initialized !")
         #TODO find way to select solving method
         print(self.model.setSimulationOptions)
-        self.model.setSimulationOptions([f"startTime={self.start_Time}",f"stopTime={self.stop_Time}",f"solver={self.solving_method}",f"stepSize={self.stepSize}"])
+        self.model.setSimulationOptions([f"startTime={self.start_Time}",f"stopTime={self.stop_Time}",f"stepSize={self.stepSize}"])#,f"solver={self.solving_method}",
 
         def aux_main():
             self.model.simulate()
@@ -330,6 +334,7 @@ class FakeModel():
         else:
             override = " "
         cmd = getExeFile + override #+ " -lv LOG_LS"
+        print(cmd)
         os.system(cmd)
 
 

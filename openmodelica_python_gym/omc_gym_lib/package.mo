@@ -33,31 +33,24 @@ block pyGymInterface "Generate step signal of type Real"
   Modelica.Blocks.Interfaces.RealOutput y[nout] "Connector of Real output signals"
     annotation (Placement(transformation(extent={{100,-10},{120,10}})));
     
-    
+   omc_gym_lib.BaseClasses.Emitter emitter(samplePeriod=samplePeriod, nin=nin, nout=nout, input_labels=input_labels, output_labels=output_labels); 
+   
+   omc_gym_lib.BaseClasses.Receiver receiver[nout](each samplePeriod=samplePeriod, index={i for i in 1:nout});
+   
+ 
     Real t(start=0);   
-
-///(stateSelect = StateSelect.always);
-
-
-  function grpcInterface
-    input Real t;
-    input Real x[nin];
-    input String in_label[nin];
-    input String out_label[nout];
-    input Real sampling_rate;
-    output Real y[nout];
     
-  external "C" annotation(Library={"-lprotobuf", "-lgrpc", "-lgpr", "-lgrpc++", "grpc_interface"},
-  LibraryDirectory={"/home/francois/Documents/git/Purecontrol/openmodelica-python-gym/motor_model/"},
-  IncludeDirectory={"/home/francois/Documents/git/Purecontrol/openmodelica-python-gym/openmodelica_python_gym/external_lib/grpc_interface"});
-    //  annotation(derivative(zeroDerivative =(in_label,in_label))=fakederive);
-  end grpcInterface;
+  // initial equation    receiver.index = {i for i in 1:nout};
+    
+  equation
+  
+   connect(u, emitter.u);
+   for i in 1:nout loop
+       connect(receiver[i].y,y[i]);
+   end for;
+  
+   der(t) = 1.0;
 
-equation
-  //when { sampleTrigger } then
-     y = grpcInterface(t, u, input_labels, output_labels, samplePeriod);
-  //end when;
-  der(t) = 1;
 
   annotation(
       Dialog(groupImage = "modelica://Modelica/Resources/Images/Blocks/Sources/Step.png"));
