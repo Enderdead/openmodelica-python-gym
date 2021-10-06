@@ -63,6 +63,10 @@ void receive_new_data(double x[], int size_x, const char * in_label[], const cha
     static auto channel = grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials());
     static grpcGymClient client(channel);
 
+    if (channel->GetState(false) != 2) {
+        std::cout << "Connection issue between modelica client and grpc server ! " std::endl;
+    }
+
     // Process input data !
     pythonGym::DataSet input_data;
     for(int i=0; i<size_x; i++) {
