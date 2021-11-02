@@ -5,6 +5,7 @@
 #include "./generated/python_gym.grpc.pb.h"
 #include "./generated/python_gym.pb.h"
 #include <string.h>
+#include "./grpc_interface.h"
 
 #include <grpcpp/grpcpp.h>
 
@@ -129,20 +130,17 @@ void compute_grpcInterface(double t, double x[], int size_x, const char* in_labe
         std::cerr << "Invalid number of output labels ! ( expected ="<<  size_y <<", got = " << size_out_label << ")" << std::endl;
         return;
     }
-
-    if ((t-data_zone_ref)>=sampling_rate) {
+    //std::cout << "batch dt : "<< (t-data_zone_ref) << " sampling rate " << sampling_rate<< std::endl;
+    if ((t-data_zone_ref)>=sampling_rate-EPSILON) {
         // copy data from zone 2 to zone 1
         for (int i = 0; i < size_y; i++) {     
             data_zone_1[i] = data_zone_2[i];     
         }
 
-        // next we need to get new value 
+        // next we need to get new value
+        //std::cout <<" we perform the sending..." << std::endl;
         receive_new_data(x, size_x, in_label, out_label, data_zone_2, size_y);
 
-        // finnaly we update our inter values.
-        //for (int i = 0; i < size_y; i++) {     
-        //    data_zone_2[i] = y[i];     
-        //}
 
         data_zone_ref += sampling_rate; 
 
@@ -165,6 +163,7 @@ void compute_grpcInterface(double t, double x[], int size_x, const char* in_labe
 
 extern "C" {// why I'm using this C style proxy  => https://www.ibm.com/docs/en/i/7.1?topic=linkage-name-mangling-c-only
 void grpcInterface(double t, double x[], int size_x, const char* in_label[], int size_in_label, const char* out_label[], int size_out_label, double sampling_rate){
+    //printf("send  : %f\n", t);
     compute_grpcInterface(t, x, size_x, in_label, size_in_label, out_label, size_out_label, sampling_rate);
 }
 
