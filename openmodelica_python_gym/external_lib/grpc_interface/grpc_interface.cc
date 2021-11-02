@@ -64,7 +64,7 @@ void receive_new_data(double x[], int size_x, const char * in_label[], const cha
     static grpcGymClient client(channel);
 
     if (channel->GetState(false) != 2) {
-        std::cout << "Connection issue between modelica client and grpc server ! " std::endl;
+        std::cout << "Connection issue between modelica client and grpc server ! " << std::endl;
     }
 
     // Process input data !
