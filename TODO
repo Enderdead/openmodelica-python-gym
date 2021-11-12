@@ -1,0 +1,6 @@
+Mettre la lib c++ (codeug).
+Faire un exemple model bateau avec un MIMO (consigne et contre couple).
+Faire à partir de cet exemple une pipeline qui tourne avec récup de données ect.
+
+Mettre en place le serveur grpc automatique avec Thread auto.
+faire le system MIMO dynamique  avec un exemple. 
