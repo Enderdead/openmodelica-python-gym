@@ -96,8 +96,10 @@ class OmcRunner():
         # Create a symbolic link to our c library
         local_so_file = os.path.join(os.path.dirname(__file__), "../external_lib/grpc_interface/build/libgrpc_interface.so")
         if not os.path.isfile(os.path.join(self.project_dir, "Resources/Library/libgrpc_interface.so")):
-            os.symlink(local_so_file, os.path.join(self.project_dir, "Resources/Library/libgrpc_interface.so"))
-
+            try:
+                os.symlink(local_so_file, os.path.join(self.project_dir, "Resources/Library/libgrpc_interface.so"))
+            except:
+                warnings.warm(f"Permission deny to create a symbolic link with {local_so_file} ! Skip this task.")
         curr_dir = os.curdir
         os.chdir(os.path.join(self.project_dir, "build"))
         if need_build:
