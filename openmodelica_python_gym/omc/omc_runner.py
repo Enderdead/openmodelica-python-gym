@@ -167,7 +167,10 @@ class OmcRunner():
         time.sleep(1)
         p = psutil.Process()
         procs = psutil.Process().children()# TODO go through all process to find process with name=omc
-        self.pids =  [ psutil.Process(procs[0].pid).children()[0].pid, procs[0].pid]
+        try:
+            self.pids =  [ psutil.Process(procs[0].pid).children()[0].pid, procs[0].pid]
+        except:
+            self.pids = None
         atexit.register(self.__del__)
         
 
