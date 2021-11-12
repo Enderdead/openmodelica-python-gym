@@ -1,0 +1,62 @@
+apt install -y cmake
+
+# Il faut installer un cmake plus récent que celui dispo 
+
+wget https://github.com/Kitware/CMake/releases/download/v3.20.6/cmake-3.20.6.tar.gz
+
+apt-get install libssl-dev
+
+  ./bootstrap
+  make
+  make install
+  
+  
+git clone --recurse-submodules -b v1.40.0 https://github.com/grpc/grpc
+
+
+-DBUILD_SHARED_LIBS=ON
+-DgRPC_INSTALL=ON \
+      -DgRPC_BUILD_TESTS=OFF \
+      -DCMAKE_INSTALL_PREFIX=
+      
+   $ mkdir -p cmake/build
+$ pushd cmake/build
+$ cmake -DgRPC_INSTALL=ON \
+      -DgRPC_BUILD_TESTS=OFF \
+      -DCMAKE_INSTALL_PREFIX=$MY_INSTALL_DIR \.
+      -DgRPC_PROTOBUF_PROVIDER=package
+      ../..
+$ make -j
+$ make install  
+
+
+faire la compilation de protobuf
+ install protobuf apres la compil
+ 
+ faire cette commande poru le module
+python3 -m pip install --user grpcio-tools==1.32.0
+
+apt install protobuf-compiler
+
+# faut compiler la lib absl .
+mkdir build
+cd build
+cmake -DBUILD_TESTING=ON -DABSL_USE_GOOGLETEST_HEAD=ON ..
+make -j
+ctest
+
+
+
+echo "deb http://build.openmodelica.org/apt xenial stable" | sudo tee /etc/apt/sources.list.d/openmodelica.list 
+
+
+ You could perhaps chown /usr/bin/omc to a non-root user and then chmod 4755 /usr/bin/omc 
+ 
+ 
+ cp Resources/Library/libgrpc_interface.so /usr/lib
+ 
+ 
+ 
+ for PKG in `apt-cache search "omlib-.*" | cut -d" " -f1`; do  apt-get install -y "$PKG"; done # Installs optional Modelica libraries (most have not been tested with OpenModelica)
+ 
+ cmake -DgRPC_INSTALL=ON   -DgRPC_BUILD_TESTS=OFF  -DBUILD_SHARED_LIBS=ON  ../..

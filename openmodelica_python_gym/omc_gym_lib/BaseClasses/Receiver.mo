@@ -1,14 +1,11 @@
 within omc_gym_lib.BaseClasses;
 
 block Receiver
-
   parameter Integer index=1 "Number of outputs";
     extends DiscreteBlock;
-
   Modelica.Blocks.Interfaces.RealOutput y "Connector of Real output signals"
     annotation (Placement(transformation(extent={{100,-10},{120,10}})));
     
-  
   function grpcGetter
     input  Real t;
     input  Integer index;    

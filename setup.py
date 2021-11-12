@@ -52,6 +52,8 @@ class ProxyProtobufMover(install_lib):
         os.system("cp ./openmodelica_python_gym/omc_gym_lib/BaseClasses/package.mo ./build/lib/openmodelica_python_gym/omc_gym_lib/BaseClasses/package.mo")
         os.system("cp ./openmodelica_python_gym/omc_gym_lib/BaseClasses/package.order ./build/lib/openmodelica_python_gym/omc_gym_lib/BaseClasses/package.order")
         os.system("cp ./openmodelica_python_gym/omc_gym_lib/BaseClasses/Receiver.mo ./build/lib/openmodelica_python_gym/omc_gym_lib/BaseClasses/Receiver.mo")
+        os.system("cp ./openmodelica_python_gym/omc_gym_lib/package.mo ./build/lib/openmodelica_python_gym/omc_gym_lib/package.mo")
+        os.system("cp ./openmodelica_python_gym/omc_gym_lib/package.order ./build/lib/openmodelica_python_gym/omc_gym_lib/package.order")
 
 
         os.chdir(prev_dir)
